@@ -25,13 +25,14 @@ Shader "Custom/Crack"
         //Como faço pra aplicar esse shader em um ponto específico de um objeto?
         void surf (Input IN, inout SurfaceOutputStandard o)
         {
-            float4 uv = tex2D(_MainTex, IN.uv_MainTex);
-            float2 center = IN.uv_MainTex - 1;
+            float2 uv = IN.uv_MainTex;
+            float4 a = tex2D(_MainTex, uv);
+            float2 center = uv - 1;
 
             float centerDist = saturate(length(center) / _Radius);
-            o.Albedo = uv * _Color;
-            o.Alpha = uv * (1-centerDist);
-            o.Emission = uv * _Emission;
+            o.Albedo = a * _Color;
+            o.Alpha = a * (1-centerDist);
+            o.Emission = a * _Emission;
         }
         ENDCG
     }
