@@ -18,18 +18,21 @@ Shader "Custom/LavaMove"
         struct Input
         {
             float2 uv_MainTex;
+            float3 viewDir;
+
         };
         fixed4 _Color1,_Color2;
         float _Slider01,_Slider02,_Velocity;
         void surf (Input IN, inout SurfaceOutputStandard o)
         {
             fixed4 c = (tex2D (_MainTex, IN.uv_MainTex) * _Color1);
+            fixed d = dot(IN.viewDir, o.Normal);
             float time = float2(_Time.y, _Time.y) * _Velocity;
             float3 n = tex2D(_NormalTex, IN.uv_MainTex + time);
             float k1 = step(n, _Slider01);
             float k2 = step(n, _Slider01 + _Slider02);
-            o.Albedo = k1 * c;
-            o.Emission =  (k1) * _Color2 ;
+            o.Albedo =  saturate(k1 * c);
+            o.Emission =  round(d) * ((k1) * _Color2) ;
             o.Alpha =  k2;
         }
         ENDCG
